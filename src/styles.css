@@ -1,0 +1,477 @@
+/* ===== Every colour in the app. Change here, nowhere else. ===== */
+:root {
+  --mt-taken-bg: #198754;
+  --mt-taken-fg: #ffffff;
+  --mt-nottaken-bg: #dc3545;
+  --mt-nottaken-fg: #ffffff;
+  --mt-take-btn-bg: #ffffff;
+  --mt-take-btn-fg: #b02a37;
+  --mt-done-bg: #198754;
+  --mt-done-fg: #ffffff;
+  --mt-page-bg: #f4f4f4;
+  --mt-text: #1c1c1c;
+  --mt-muted: #6c757d;
+  --mt-surface: #ffffff;
+  --mt-border: #dcdcdc;
+  --mt-missed: #b02a37;
+  --mt-danger-btn-bg: #dc3545;
+  --mt-danger-btn-fg: #ffffff;
+  --mt-strip-bg: #dc3545;
+  --mt-strip-fg: #ffffff;
+
+  --mt-status-size: 2.4rem;
+  --mt-tap-height: 64px;
+  --mt-radius: 14px;
+}
+
+/* ===== iOS fixes. Do not remove these. ===== */
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--mt-page-bg);
+  color: var(--mt-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 18px;
+  overscroll-behavior-y: contain;
+}
+
+button {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  user-select: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:active {
+  filter: brightness(0.92);
+}
+
+button:disabled {
+  opacity: 0.65;
+}
+
+/* 16px minimum or Safari zooms the page on focus and never zooms back */
+.mt-input {
+  font-size: 16px;
+  width: 100%;
+  min-height: var(--mt-tap-height);
+  padding: 0 14px;
+  border: 1px solid var(--mt-border);
+  border-radius: var(--mt-radius);
+  margin-bottom: 10px;
+  font-family: inherit;
+}
+
+/* ===== Layout. Covers 390px to 440px without reflowing. ===== */
+.mt-app {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+  min-height: 100dvh;
+}
+
+.mt-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 4px 0 16px;
+}
+
+/* ===== Cards ===== */
+.mt-card {
+  border-radius: var(--mt-radius);
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+.mt-card-taken {
+  background: var(--mt-taken-bg);
+  color: var(--mt-taken-fg);
+}
+
+.mt-card-nottaken {
+  background: var(--mt-nottaken-bg);
+  color: var(--mt-nottaken-fg);
+}
+
+.mt-card-name {
+  font-size: 1.15rem;
+  opacity: 0.92;
+  margin-bottom: 2px;
+}
+
+.mt-card-status {
+  font-size: var(--mt-status-size);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.mt-card-stamp {
+  font-size: 1rem;
+  opacity: 0.94;
+  margin-top: 4px;
+}
+
+.mt-take-btn {
+  display: block;
+  width: 100%;
+  min-height: var(--mt-tap-height);
+  margin-top: 14px;
+  border-radius: var(--mt-radius);
+  background: var(--mt-take-btn-bg);
+  color: var(--mt-take-btn-fg);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* ===== Dialog ===== */
+.mt-overlay {
+  position: absolute;
+  inset: 0;
+  min-height: 100dvh;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 50;
+}
+
+.mt-dialog {
+  background: var(--mt-surface);
+  border-radius: var(--mt-radius);
+  padding: 22px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.mt-dialog-name {
+  font-size: 1.1rem;
+  color: var(--mt-muted);
+  margin-bottom: 8px;
+}
+
+.mt-dialog-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+.mt-dialog-warning {
+  font-size: 1.05rem;
+  color: var(--mt-missed);
+  margin-bottom: 22px;
+}
+
+.mt-done-btn {
+  display: block;
+  width: 100%;
+  min-height: 76px;
+  border-radius: var(--mt-radius);
+  background: var(--mt-done-bg);
+  color: var(--mt-done-fg);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.mt-back-btn {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 14px;
+  background: transparent;
+  color: var(--mt-muted);
+  font-size: 1rem;
+}
+
+/* ===== Add medicine ===== */
+.mt-add-box {
+  background: var(--mt-surface);
+  border-radius: var(--mt-radius);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.mt-add-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.mt-primary-btn,
+.mt-secondary-btn {
+  flex: 1;
+  width: 100%;
+  min-height: var(--mt-tap-height);
+  border-radius: var(--mt-radius);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.mt-primary-btn {
+  background: var(--mt-taken-bg);
+  color: var(--mt-taken-fg);
+}
+
+.mt-secondary-btn {
+  background: var(--mt-surface);
+  color: var(--mt-text);
+  border: 1px solid var(--mt-border);
+  margin-bottom: 14px;
+}
+
+.mt-add-box .mt-secondary-btn {
+  margin-bottom: 0;
+}
+
+/* ===== Record ===== */
+.mt-ledger {
+  margin-top: 26px;
+}
+
+.mt-ledger-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.mt-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mt-tab {
+  flex: 0 0 auto;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: var(--mt-radius);
+  border: 1px solid var(--mt-border);
+  background: var(--mt-surface);
+  color: var(--mt-text);
+  font-size: 1.05rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mt-tab-on {
+  background: var(--mt-text);
+  color: var(--mt-surface);
+  border-color: var(--mt-text);
+}
+
+.mt-ledger-list {
+  background: var(--mt-surface);
+  border-radius: var(--mt-radius);
+  padding: 4px 14px;
+}
+
+.mt-ledger-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 11px 0;
+  font-size: 1.05rem;
+  border-bottom: 1px solid var(--mt-border);
+}
+
+.mt-ledger-row:last-child {
+  border-bottom: none;
+}
+
+.mt-ledger-date {
+  color: var(--mt-muted);
+  white-space: nowrap;
+}
+
+.mt-ledger-yes {
+  font-weight: 600;
+  text-align: right;
+}
+
+.mt-ledger-short {
+  color: var(--mt-missed);
+  font-weight: 600;
+  text-align: right;
+}
+
+.mt-ledger-no {
+  color: var(--mt-missed);
+}
+
+.mt-error {
+  color: var(--mt-missed);
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.mt-loading {
+  color: var(--mt-muted);
+  padding: 12px 0;
+}
+
+
+/* ===== Partial dose strip (some doses done, some still due) ===== */
+.mt-card-count {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin-top: 6px;
+}
+
+.mt-card-status-partial {
+  font-size: 2rem;
+}
+
+.mt-strip {
+  background: var(--mt-strip-bg);
+  color: var(--mt-strip-fg);
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 14px;
+}
+
+.mt-strip-text {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.mt-take-btn-strip {
+  margin-top: 0;
+  font-size: 1.05rem;
+  color: var(--mt-take-btn-fg);
+}
+
+/* ===== Doses-per-day picker ===== */
+.mt-field-label {
+  font-size: 1rem;
+  color: var(--mt-muted);
+  margin: 4px 0 8px;
+}
+
+.mt-dose-picker {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.mt-dose-opt {
+  flex: 1;
+  min-height: var(--mt-tap-height);
+  border-radius: var(--mt-radius);
+  border: 1px solid var(--mt-border);
+  background: var(--mt-surface);
+  color: var(--mt-text);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.mt-dose-opt-on {
+  background: var(--mt-taken-bg);
+  color: var(--mt-taken-fg);
+  border-color: var(--mt-taken-bg);
+}
+
+.mt-ledger-short {
+  color: var(--mt-missed);
+  font-weight: 600;
+}
+
+.mt-empty {
+  color: var(--mt-muted);
+  font-size: 1.05rem;
+  padding: 8px 0 16px;
+}
+
+/* ===== Rename and remove ===== */
+.mt-link-btn {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 10px;
+  background: transparent;
+  color: var(--mt-muted);
+  font-size: 1rem;
+  text-decoration: underline;
+}
+
+.mt-edit-box {
+  background: var(--mt-surface);
+  border-radius: var(--mt-radius);
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.mt-edit-box .mt-primary-btn,
+.mt-edit-box .mt-secondary-btn,
+.mt-edit-box .mt-danger-btn {
+  margin-bottom: 0;
+}
+
+.mt-danger-btn {
+  flex: 1;
+  width: 100%;
+  min-height: var(--mt-tap-height);
+  border-radius: var(--mt-radius);
+  background: var(--mt-danger-btn-bg);
+  color: var(--mt-danger-btn-fg);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.mt-edit-divider {
+  height: 1px;
+  background: var(--mt-border);
+  margin: 18px 0;
+}
+
+.mt-edit-warning {
+  font-size: 1.05rem;
+  color: var(--mt-missed);
+  margin-bottom: 12px;
+}
+
+.mt-edit-error {
+  margin-top: 10px;
+}
+
+.mt-seg {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mt-seg-btn {
+  flex: 1;
+  min-height: 48px;
+  border-radius: var(--mt-radius);
+  border: 1px solid var(--mt-border);
+  background: var(--mt-surface);
+  color: var(--mt-muted);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.mt-seg-on {
+  background: var(--mt-text);
+  color: var(--mt-surface);
+  border-color: var(--mt-text);
+}
+
+.mt-delete-btn {
+  margin-top: 10px;
+}
+
+.mt-edit-box .mt-delete-btn {
+  margin-bottom: 0;
+}
