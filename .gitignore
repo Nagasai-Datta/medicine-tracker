@@ -3,3 +3,4 @@ dist
 .env
 .DS_Store
 postgres_supabase_password.txt
+passwword.docx
