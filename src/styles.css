@@ -131,8 +131,10 @@ button:disabled {
 }
 
 /* ===== Dialog ===== */
+/* fixed, not absolute: pinned to the screen, so a dialog opened from a card
+   further down the page still appears where she is looking. */
 .mt-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
   min-height: 100dvh;
   background: rgba(0, 0, 0, 0.55);
@@ -474,4 +476,66 @@ button:disabled {
 
 .mt-edit-box .mt-delete-btn {
   margin-bottom: 0;
+}
+
+/* ===== Override ===== */
+/* Deliberately quieter than every other button on the card. */
+.mt-override-btn {
+  display: block;
+  min-height: 44px;
+  margin-top: 14px;
+  padding: 0 18px;
+  border-radius: var(--mt-radius);
+  border: 1px solid var(--mt-taken-fg);
+  background: transparent;
+  color: var(--mt-taken-fg);
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.mt-override-opt {
+  display: block;
+  width: 100%;
+  min-height: 56px;
+  margin-bottom: 10px;
+  border-radius: var(--mt-radius);
+  border: 1px solid var(--mt-missed);
+  background: var(--mt-surface);
+  color: var(--mt-missed);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* A medicine taken 6 times a day has 6 choices; keep them all reachable. */
+.mt-dialog-scroll {
+  max-height: calc(100dvh - 36px);
+  overflow-y: auto;
+}
+
+/* One dose per line in the record, each with its dose number. */
+.mt-ledger-doses {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+}
+
+.mt-dose-no {
+  font-size: 0.7em;
+  margin-left: 1px;
+}
+
+.mt-ledger-overridden {
+  color: var(--mt-muted);
+  font-weight: 400;
+}
+
+/* "(overridden 1)" drops to its own line whole, never split in two. */
+.mt-nowrap {
+  white-space: nowrap;
+}
+
+.mt-ledger-tag {
+  font-size: 0.85em;
 }

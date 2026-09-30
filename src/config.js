@@ -14,8 +14,8 @@ export const LOCALE = 'en-IN';
 // How many days of history the ledger shows.
 export const LEDGER_DAYS = 21;
 
-// Options offered in the add-medicine form.
-export const DOSE_OPTIONS = [1, 2, 3];
+// Options offered in the add-medicine form. schema.sql allows 1 to 6.
+export const DOSE_OPTIONS = [1, 2, 3, 4, 5, 6];
 
 // Every word she reads. Change freely.
 export const TEXT = {
@@ -33,6 +33,13 @@ export const TEXT = {
   confirmWarning: 'Do not press it before.',
   confirmDone: 'Done',
   confirmBack: 'Go back',
+  overrideButton: 'Override',
+  overrideHeading: 'Only override if the tablet was NOT taken',
+  overrideWarning: 'The record keeps every entry.',
+  overrideOnly: 'Override',
+  overrideLast: (k) => `Override last ${k} ${k === 1 ? 'dose' : 'doses'}`,
+  overrideAll: (n) => `Override all ${n} doses`,
+  overriddenTag: (n) => `(overridden ${n})`,
   addMedicine: 'Add a medicine',
   addPlaceholder: 'Medicine name',
   addDosesLabel: 'How many times a day?',

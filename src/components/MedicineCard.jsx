@@ -1,7 +1,7 @@
 import { TEXT } from '../config';
 import { formatStamp } from '../day';
 
-export default function MedicineCard({ card, onTake }) {
+export default function MedicineCard({ card, onTake, onOverride }) {
   const { name, state, takenCount, total, remaining, lastTakenAt, lastTodayAt } = card;
 
   // Nothing taken yet: whole card red.
@@ -42,13 +42,20 @@ export default function MedicineCard({ card, onTake }) {
     );
   }
 
-  // All doses done: whole card green, no button.
+  // All doses done: whole card green, no take button. Override is the only
+  // button, small and plain, and it opens a dialog with Go back before
+  // anything happens. It only shows once the dose_overrides table exists.
   return (
     <div className="mt-card mt-card-taken">
       <div className="mt-card-name">{name}</div>
       <div className="mt-card-status">{TEXT.taken}</div>
       <div className="mt-card-stamp">{formatStamp(lastTodayAt)}</div>
       <div className="mt-card-count">{TEXT.doseCount(takenCount, total)}</div>
+      {card.canOverride && (
+        <button type="button" className="mt-override-btn" onClick={() => onOverride(card)}>
+          {TEXT.overrideButton}
+        </button>
+      )}
     </div>
   );
 }

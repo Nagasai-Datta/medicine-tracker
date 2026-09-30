@@ -97,6 +97,45 @@ export async function insertDose(medicationId) {
   return row;
 }
 
+// Overrides live in their own table. dose_events is never touched.
+//
+// Returns null when the table does not exist yet (migration-add-override.sql
+// not run). The app then behaves exactly as it did before overrides existed
+// and hides the Override button. Any other error is thrown like every other
+// fetch, so a network blip never makes an overridden dose count again.
+//
+// An override is always made after its dose, so the same window as
+// fetchEvents catches every override of every dose that fetchEvents returns.
+export async function fetchOverrides() {
+  const since = new Date();
+  since.setDate(since.getDate() - (LEDGER_DAYS + 2));
+  const { data, error } = await supabase
+    .from('dose_overrides')
+    .select('id, dose_event_id, overridden_at')
+    .gte('overridden_at', since.toISOString());
+  if (error) {
+    if (error.code === 'PGRST205' || error.code === '42P01') return null;
+    throw error;
+  }
+  return data;
+}
+
+// ids are generated on the phone, and each dose can only be overridden once,
+// so a retry or a double tap cannot create a second override.
+// overridden_at uses the phone clock, same as taken_at, so the two compare
+// cleanly when the record works out which dose of the day each one was.
+export async function insertOverrides(doseEventIds) {
+  const overriddenAt = new Date().toISOString();
+  const rows = doseEventIds.map((doseEventId) => ({
+    id: uuid(),
+    dose_event_id: doseEventId,
+    overridden_at: overriddenAt,
+  }));
+  const { error } = await supabase.from('dose_overrides').insert(rows);
+  if (error && error.code !== '23505') throw error;
+  return rows;
+}
+
 // Permanent. The foreign key cascade takes every dose_events row with it.
 export async function deleteMedication(id) {
   const { error } = await supabase.from('medications').delete().eq('id', id);

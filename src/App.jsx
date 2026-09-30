@@ -4,6 +4,7 @@ import { getSession, supabase } from './db';
 import { useLedger } from './useLedger';
 import MedicineCard from './components/MedicineCard';
 import ConfirmDialog from './components/ConfirmDialog';
+import OverrideDialog from './components/OverrideDialog';
 import AddMedicine from './components/AddMedicine';
 import Ledger from './components/Ledger';
 import Login from './components/Login';
@@ -34,9 +35,11 @@ function Tracker() {
     cards,
     medicines,
     events,
+    overriddenAt,
     loading,
     error,
     recordDose,
+    overrideDoses,
     addMedicine,
     renameMedicine,
     setActive,
@@ -44,10 +47,16 @@ function Tracker() {
   } = useLedger();
   // One dialog for the whole app, not one per card.
   const [confirming, setConfirming] = useState(null);
+  const [overriding, setOverriding] = useState(null);
 
   async function confirm(card) {
     await recordDose(card.id);
     setConfirming(null);
+  }
+
+  async function override(doseEventIds) {
+    await overrideDoses(doseEventIds);
+    setOverriding(null);
   }
 
   return (
@@ -62,7 +71,12 @@ function Tracker() {
       )}
 
       {cards.map((card) => (
-        <MedicineCard key={card.id} card={card} onTake={setConfirming} />
+        <MedicineCard
+          key={card.id}
+          card={card}
+          onTake={setConfirming}
+          onOverride={setOverriding}
+        />
       ))}
 
       <AddMedicine onAdd={addMedicine} />
@@ -70,6 +84,7 @@ function Tracker() {
       <Ledger
         medicines={medicines}
         events={events}
+        overriddenAt={overriddenAt}
         onRename={renameMedicine}
         onSetActive={setActive}
         onDelete={removeMedicine}
@@ -80,6 +95,14 @@ function Tracker() {
           card={confirming}
           onConfirm={confirm}
           onCancel={() => setConfirming(null)}
+        />
+      )}
+
+      {overriding && (
+        <OverrideDialog
+          card={overriding}
+          onConfirm={override}
+          onCancel={() => setOverriding(null)}
         />
       )}
     </div>

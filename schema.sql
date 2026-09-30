@@ -37,3 +37,25 @@ create policy meds_delete on medications for delete using (auth.uid() = user_id)
 -- policy, so the record cannot be rewritten even by the account that owns it.
 create policy events_select on dose_events for select using (auth.uid() = user_id);
 create policy events_insert on dose_events for insert with check (auth.uid() = user_id);
+
+-- Overrides. One row says "do not count this dose on the card". The dose
+-- itself stays in dose_events and in the record, marked overridden. Append
+-- only like dose_events: no update or delete policy. The cascade from
+-- dose_events means deleting a whole medicine still takes everything with it.
+create table dose_overrides (
+  id             uuid primary key,
+  user_id        uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  dose_event_id  uuid not null unique references dose_events(id) on delete cascade,
+  overridden_at  timestamptz not null default now(),
+  created_at     timestamptz not null default now()
+);
+
+alter table dose_overrides enable row level security;
+
+create policy overrides_select on dose_overrides for select using (auth.uid() = user_id);
+create policy overrides_insert on dose_overrides for insert with check (
+  auth.uid() = user_id
+  and exists (
+    select 1 from dose_events d where d.id = dose_event_id and d.user_id = auth.uid()
+  )
+);

@@ -190,6 +190,8 @@ Card states, for a medicine with `doses_per_day = 2`:
 For `doses_per_day = 1` there is no middle state, it goes straight from red to
 green.
 
+A fully green card also has a small **Override** button. See section 10.
+
 ---
 
 ## 7. Where to change things
@@ -206,6 +208,7 @@ green.
 | Minimum button height | `src/styles.css` | `--mt-tap-height` |
 | Every database query | `src/db.js` | whole file |
 | Card state logic | `src/useLedger.js` | the `cards` map at the bottom |
+| Dose numbers in the record | `src/doses.js` | `numberDoses` |
 
 `DAY_START_HOUR` is read in exactly one function. Nothing else in the app does
 date maths, everything asks `dayKey()` or `calendarDayKey()`, so changing that
@@ -256,12 +259,41 @@ the dashboard has a Restore button and no data is lost.
 
 ---
 
-## 10. If you want undo later
+## 10. Override
 
-The record is append only at the database level, not just in the UI:
-`dose_events` has a select policy and an insert policy and nothing else, so
-there is no update or delete path even for the account that owns the rows.
+For when **Done** was pressed by accident. A fully green card has a small
+**Override** button. It opens a dialog with **Go back**, and one choice per
+dose, always counting back from the most recent:
 
-To add an undo button later: add a `voided boolean not null default false`
-column, add an update policy scoped to it, and filter voided rows out in
-`fetchEvents`. The original row is never destroyed.
+| Doses a day | Choices |
+|---|---|
+| 1 | Override |
+| 2 | Override last 1 dose, Override all 2 doses |
+| 3 | Override last 1 dose, Override last 2 doses, Override all 3 doses |
+
+and so on up to 6. The card drops those doses and asks again: red "Not taken"
+if all were overridden, the red strip if only some were. "Last taken" on a
+red card ignores overridden doses. There is no limit on overrides, and the
+6am reset works exactly as before.
+
+**Nothing is deleted or changed.** `dose_events` keeps its select and insert
+policies only, so it is still append only. An override is a row in a separate
+`dose_overrides` table that says "do not count this dose on the card". That
+table is append only too.
+
+**The record keeps every dose**, one per line, each with its dose number for
+that 6am day. Overridden doses are greyed and tagged with how many times that
+dose number had been overridden that day:
+
+```
+Tue 30 Sep    8:00 am₁
+              2:00 pm₂ (overridden 1)
+              4:00 pm₂ (overridden 2)
+              9:00 pm₂
+```
+
+The "(1 of 2)" hint only counts doses that were not overridden.
+
+**To turn it on**, run `migration-add-override.sql` once in the SQL editor. A
+fresh `schema.sql` already includes it. Until it has been run the app works
+exactly as before and the Override button simply does not appear.

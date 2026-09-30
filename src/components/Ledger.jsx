@@ -2,8 +2,16 @@ import { useState } from 'react';
 import EditMedicine from './EditMedicine';
 import { LEDGER_DAYS, TEXT } from '../config';
 import { calendarDayKey, formatDayLabel, formatTime, recentCalendarDays } from '../day';
+import { numberDoses } from '../doses';
 
-export default function Ledger({ medicines, events, onRename, onSetActive, onDelete }) {
+export default function Ledger({
+  medicines,
+  events,
+  overriddenAt,
+  onRename,
+  onSetActive,
+  onDelete,
+}) {
   const [selectedId, setSelectedId] = useState(null);
   const [showArchived, setShowArchived] = useState(false);
 
@@ -52,6 +60,7 @@ export default function Ledger({ medicines, events, onRename, onSetActive, onDel
           medicine={selected}
           all={visible}
           events={events}
+          overriddenAt={overriddenAt}
           selectedId={selected.id}
           onSelect={setSelectedId}
           onRename={onRename}
@@ -63,9 +72,21 @@ export default function Ledger({ medicines, events, onRename, onSetActive, onDel
   );
 }
 
-function Detail({ medicine, all, events, selectedId, onSelect, onRename, onSetActive, onDelete }) {
+function Detail({
+  medicine,
+  all,
+  events,
+  overriddenAt,
+  selectedId,
+  onSelect,
+  onRename,
+  onSetActive,
+  onDelete,
+}) {
   const total = medicine.doses_per_day || 1;
   const mine = events.filter((e) => e.medication_id === medicine.id);
+  // Every dose is listed, overridden or not. Nothing leaves the record.
+  const numbers = numberDoses(mine, overriddenAt);
 
   // Days run from the day this medicine was added up to today, capped at
   // LEDGER_DAYS. Nothing before it existed, so nothing before it is shown.
@@ -97,16 +118,39 @@ function Detail({ medicine, all, events, selectedId, onSelect, onRename, onSetAc
       <div className="mt-ledger-list">
         {days.map((key) => {
           const rows = byDay[key] || [];
-          const short = rows.length > 0 && rows.length < total;
+          const counted = rows.filter((r) => !overriddenAt.has(r.id)).length;
+          const short = rows.length > 0 && counted < total;
           return (
             <div className="mt-ledger-row" key={key}>
               <span className="mt-ledger-date">{formatDayLabel(key)}</span>
               {rows.length === 0 ? (
                 <span className="mt-ledger-no">{TEXT.noEntry}</span>
               ) : (
-                <span className={short ? 'mt-ledger-short' : 'mt-ledger-yes'}>
-                  {rows.map((r) => formatTime(r.taken_at)).join(', ')}
-                  {short ? ` (${rows.length} of ${total})` : ''}
+                <span className={short ? 'mt-ledger-doses mt-ledger-short' : 'mt-ledger-doses mt-ledger-yes'}>
+                  {rows.map((r) => {
+                    const { number, overrideNumber } = numbers.get(r.id);
+                    const overridden = overrideNumber !== null;
+                    return (
+                      <span
+                        key={r.id}
+                        className={overridden ? 'mt-ledger-dose mt-ledger-overridden' : 'mt-ledger-dose'}
+                      >
+                        <span className="mt-nowrap">
+                          {formatTime(r.taken_at)}
+                          <sub className="mt-dose-no">{number}</sub>
+                        </span>
+                        {overridden && (
+                          <>
+                            {' '}
+                            <span className="mt-nowrap mt-ledger-tag">
+                              {TEXT.overriddenTag(overrideNumber)}
+                            </span>
+                          </>
+                        )}
+                      </span>
+                    );
+                  })}
+                  {short && <span className="mt-ledger-dose">{`(${counted} of ${total})`}</span>}
                 </span>
               )}
             </div>
